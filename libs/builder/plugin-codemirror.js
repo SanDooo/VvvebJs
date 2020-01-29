@@ -2,8 +2,9 @@ Vvveb.CodeEditor = {
 	
 	isActive: false,
 	oldValue: '',
-	doc:false,
-	codemirror:false,
+	doc: false,
+	codemirror: false,
+	prettify: false,
 	
 	init: function(doc) {
 
@@ -13,6 +14,7 @@ Vvveb.CodeEditor = {
 				mode: 'text/html',
 				lineNumbers: true,
 				autofocus: true,
+				autoformat: true,
 				lineWrapping: true,
 				//viewportMargin:Infinity,
 				theme: 'material'
@@ -41,8 +43,15 @@ Vvveb.CodeEditor = {
 		if (this.isActive == true)
 		{
 			var scrollInfo = this.codemirror.getScrollInfo();
-			this.codemirror.setValue(Vvveb.Builder.getHtml());
-			this.codemirror.scrollTo(scrollInfo.left, scrollInfo.top);
+			this.codemirror.setValue(Vvveb.Builder.getHtml( true, true ));
+
+			if ( this.prettify ) {
+				// Prettify code
+				CodeMirror.commands["selectAll"]( this.codemirror );
+				this.codemirror.autoFormatRange( this.codemirror.getCursor(true), this.codemirror.getCursor(false) );
+			}
+			// Désélection (et scroll au début du document)
+			this.codemirror.setCursor(0);
 		}
 	},
 
